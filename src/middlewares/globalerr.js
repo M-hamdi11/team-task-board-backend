@@ -1,4 +1,4 @@
-export default function globalerr(err, req, res, next) {
+export function globalerr(err, req, res, next) {
   console.error(err)
 
   if (err.name === 'ValidationError') {
