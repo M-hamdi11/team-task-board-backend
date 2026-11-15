@@ -2,41 +2,51 @@
 
 REST API for a Kanban-style task board, built with Node.js, Express and MongoDB (Mongoose).
 
-**Frontend repo:** https://github.com/M-hamdi11/team-task-board-frontend.git
+- **Live API:** https://team-task-board-backend.vercel.app/tasks
+- **Live demo (frontend):** https://team-task-board-frontend.vercel.app/
+- **Frontend repo:** https://github.com/M-hamdi11/team-task-board-frontend
 
 ## Tech stack
 
 - Node.js + Express (ES modules)
 - MongoDB Atlas + Mongoose
 - CORS, dotenv
+- Deployed on Vercel (serverless)
 
 ## Getting started
 
 ```bash
 npm install
-cp .env.example .env   # then fill in your values
+cp .env.example .env   # Windows: copy .env.example .env
 npm run dev
 ```
 
-The server runs on `http://localhost:3000`.
+Then fill in your values in `.env`. The server runs on `http://localhost:3000`.
 
 ## Environment variables
 
-| Variable    | Description                          |
-|-------------|--------------------------------------|
-| `PORT`      | Server port (default 3000)           |
-| `MONGO_URI` | MongoDB connection string            |
+| Variable    | Description                                                        |
+|-------------|--------------------------------------------------------------------|
+| `PORT`      | Server port (default 3000, local only)                             |
+| `MONGO_URI` | MongoDB connection string, including the database name (`team-task-board`) |
+
+Example:
+
+```
+PORT=3000
+MONGO_URI=mongodb+srv://USER:PASSWORD@cluster.mongodb.net/team-task-board?retryWrites=true&w=majority
+```
 
 ## API
 
-Base URL: `/api/tasks`
+Base URL: `/tasks`
 
-| Method | Endpoint     | Description                    |
-|--------|--------------|--------------------------------|
-| GET    | `/`          | Get all tasks                  |
-| POST   | `/`          | Create a task                  |
-| PATCH  | `/:id`       | Update a task / change status  |
-| DELETE | `/:id`       | Delete a task                  |
+| Method | Endpoint  | Description                   |
+|--------|-----------|-------------------------------|
+| GET    | `/tasks`      | Get all tasks                 |
+| POST   | `/tasks`      | Create a task                 |
+| PATCH  | `/tasks/:id`  | Update a task / change status |
+| DELETE | `/tasks/:id`  | Delete a task                 |
 
 ### Task object
 
@@ -47,11 +57,15 @@ Base URL: `/api/tasks`
   "description": "Users can't reset password",
   "assignee": "Ahmed",
   "dueDate": "2026-11-20",
-  "status": "todo"
+  "status": "todo",
+  "createdAt": "2026-11-14T21:22:22.285Z",
+  "updatedAt": "2026-11-14T21:22:22.285Z"
 }
 ```
 
-`status` is one of: `todo`, `inprogress`, `done`. `dueDate` format is `YYYY-MM-DD`.
+- `title` is required.
+- `status` is one of: `todo`, `inprogress`, `done` (new tasks start as `todo`).
+- `dueDate` format is `YYYY-MM-DD`.
 
 ### Errors
 
@@ -61,13 +75,18 @@ Errors return JSON: `{ "error": "message" }`
 - `404` task not found
 - `500` server error
 
+## Deployment
+
+The API is deployed on Vercel. `src/app.js` exports the Express app and `vercel.json` routes all requests to it. Set `MONGO_URI` in the Vercel project's environment variables, and allow access in MongoDB Atlas (Network Access).
+
 ## Project structure
 
 ```
-config/        database connection
-models/        Mongoose schema
+config/            database connection
+models/            Mongoose schema
 src/
   modules/tasks/   routes, controller, service
   middlewares/     global error handler
   app.js
+vercel.json        Vercel configuration
 ```
